@@ -1,4 +1,4 @@
 package com.TpFinalLaboIII.GestionTorneoDeFutbol.DTOS;
 
-public class RegistrarDtDTO {
+public class FixtureDTO {
 }

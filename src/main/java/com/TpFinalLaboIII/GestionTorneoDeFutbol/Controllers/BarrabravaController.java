@@ -1,4 +1,4 @@
 package com.TpFinalLaboIII.GestionTorneoDeFutbol.Controllers;
 
-public class UsuarioController {
+public class BarrabravaController {
 }

@@ -24,6 +24,7 @@ public class Torneo {
     @NonNull
     private Date FechaFin;
     @NonNull
+    @Enumerated(EnumType.STRING)
     private ESTADOTORNEO estadotorneo;
 
     // Bidireccional

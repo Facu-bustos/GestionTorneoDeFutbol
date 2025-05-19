@@ -24,6 +24,7 @@ public class Fixture {
     @NonNull
     private Date fechaPartido;
     @NonNull
+    @Enumerated(EnumType.STRING)
     private ESTADOPARTIDO estadopartido;
 
     //birideccional

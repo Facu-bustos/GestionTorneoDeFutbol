@@ -19,6 +19,7 @@ public class Jugador {
     @NonNull
     private long numeroCamiseta;
     @NonNull
+    @Enumerated(EnumType.STRING)
     private POSICION posicion;
 
     // Bidireccional
