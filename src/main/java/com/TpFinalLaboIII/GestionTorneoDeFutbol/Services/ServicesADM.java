@@ -24,20 +24,19 @@ public class ServicesADM {
     }
 
 
-    public void postAdmin(@RequestBody AdmDTO adminDTO)
+    public ResponseEntity<Void> postAdmin(@RequestBody AdmDTO adminDTO)
     {
         Administrador admin = new Administrador();
         admin.setUsername(adminDTO.getUsername());
         admin.setEmail(adminDTO.getEmail());
         admin.setPassword(adminDTO.getPassword());
         admin.setRoleuser(adminDTO.getRoleuser());
-        iRepositoryADM.save(admin);
+        if(admin==null)
+        {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }else {
+            iRepositoryADM.save(admin);
+        }
+        return ResponseEntity.ok().build();
     }
-
-    public Optional<Administrador> getAdmin(@RequestParam long id)
-    {
-        Optional<Administrador>administrador = iRepositoryADM.findById(id);
-        return administrador;
-    }
-
 }

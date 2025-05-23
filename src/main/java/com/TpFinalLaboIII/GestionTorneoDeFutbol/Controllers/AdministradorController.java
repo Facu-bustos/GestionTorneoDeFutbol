@@ -21,16 +21,7 @@ public class AdministradorController {
     @PostMapping("/addAdmin")
     public ResponseEntity<Void>postAdmin(@RequestBody AdmDTO admdto)
     {
-        servicesADM.postAdmin(admdto);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return servicesADM.postAdmin(admdto);
     }
-
-    @GetMapping("/getAdmin/{id}")
-    public ResponseEntity<Void>getAdmin(@RequestParam Long id)
-    {
-        servicesADM.getAdmin(id);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-    }
-
 
 }

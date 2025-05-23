@@ -1,13 +1,13 @@
 package com.TpFinalLaboIII.GestionTorneoDeFutbol.Controllers;
 
+import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.Usuario;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Services.ServicesUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -21,10 +21,13 @@ public class UsuarioController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Void>getUser(@RequestParam long id)
-    {
-        servicesUser.getUsersByID(id);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    @ResponseBody
+    public ResponseEntity<Usuario> getUser(@PathVariable long id) {
+        Optional<Usuario> usuario = servicesUser.getUsersByID(id);
+        if (usuario.isPresent()) {
+            return ResponseEntity.ok(usuario.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
-
 }
