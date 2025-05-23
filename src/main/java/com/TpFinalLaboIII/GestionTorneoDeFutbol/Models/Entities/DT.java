@@ -1,6 +1,7 @@
 package com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities;
 
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Enums.ESTILODEJUEGO;
+import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Enums.ROLEUSER;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,4 +25,7 @@ public class DT{
     @NonNull
     @Enumerated(EnumType.STRING)
     private ESTILODEJUEGO  estilodejuego;
+
+    @Enumerated(EnumType.STRING)
+    private ROLEUSER roleuser ;
 }

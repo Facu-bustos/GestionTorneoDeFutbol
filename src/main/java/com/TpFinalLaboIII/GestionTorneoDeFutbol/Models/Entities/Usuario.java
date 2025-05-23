@@ -2,24 +2,72 @@ package com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities;
 
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Enums.ROLEUSER;
 import jakarta.persistence.*;
-import lombok.NonNull;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import lombok.*;
 
 @Entity
 @Table(name = "usuarios")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "tipo_usuario", discriminatorType =  DiscriminatorType.STRING)
 
-public abstract class Usuario {
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@ToString
+public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idUsuario;
-    @NonNull
+    @NotBlank
     private String username;
-    @NonNull
+    @NotBlank
     private String password;
-    @NonNull
+    @NotBlank
+    @Email(message = "Email invalido")
     private String email;
-    @NonNull
+
     @Enumerated(EnumType.STRING)
     private ROLEUSER roleuser;
+
+    public Long getIdUsuario() {
+        return idUsuario;
+    }
+
+    public void setIdUsuario(Long idUsuario) {
+        this.idUsuario = idUsuario;
+    }
+
+    public @NotBlank String getUsername() {
+        return username;
+    }
+
+    public void setUsername(@NotBlank String username) {
+        this.username = username;
+    }
+
+    public @NotBlank String getPassword() {
+        return password;
+    }
+
+    public void setPassword(@NotBlank String password) {
+        this.password = password;
+    }
+
+    public @NotBlank @Email(message = "Email invalido") String getEmail() {
+        return email;
+    }
+
+    public void setEmail(@NotBlank @Email(message = "Email invalido") String email) {
+        this.email = email;
+    }
+
+    public ROLEUSER getRoleuser() {
+        return roleuser;
+    }
+
+    public void setRoleuser(ROLEUSER roleuser) {
+        this.roleuser = roleuser;
+    }
 }

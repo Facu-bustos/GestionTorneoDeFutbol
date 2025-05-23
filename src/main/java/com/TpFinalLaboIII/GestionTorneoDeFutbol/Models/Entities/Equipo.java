@@ -1,6 +1,7 @@
 package com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.apache.catalina.LifecycleState;
 
@@ -16,7 +17,7 @@ public class Equipo {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private long idEquipo;
-    @NonNull
+    @NotBlank
     private String nombre;
 
     @ManyToOne()
@@ -33,7 +34,7 @@ public class Equipo {
     private List<Fixture>fixtureComoVisitante;
 
     //Relacion 1 a 1
-    @OneToOne()
+    @OneToOne
     @JoinColumn(name = "id_DT", referencedColumnName = "idDT")
     private DT dt;
 

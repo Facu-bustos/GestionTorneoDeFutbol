@@ -2,6 +2,7 @@ package com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities;
 
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Enums.ESTADOTORNEO;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.util.Date;
@@ -17,13 +18,13 @@ public class Torneo {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private long idTorneo;
-    @NonNull
+    @NotBlank
     private String nombre;
-    @NonNull
+    @NotBlank
     private Date FechaInicio;
-    @NonNull
+    @NotBlank
     private Date FechaFin;
-    @NonNull
+    @NotBlank
     @Enumerated(EnumType.STRING)
     private ESTADOTORNEO estadotorneo;
 

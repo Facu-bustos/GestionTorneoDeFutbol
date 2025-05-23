@@ -2,6 +2,7 @@ package com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities;
 
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Enums.POSICION;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Entity
@@ -14,11 +15,11 @@ public class Jugador {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long idJugador;
-    @NonNull
+    @NotBlank
     private String nombre;
-    @NonNull
+    @NotBlank
     private long numeroCamiseta;
-    @NonNull
+    @NotBlank
     @Enumerated(EnumType.STRING)
     private POSICION posicion;
 
@@ -27,6 +28,5 @@ public class Jugador {
     @JoinColumn(name = "id_Equipo",
     referencedColumnName = "idEquipo")
     private Equipo equipo;
-
 
 }
