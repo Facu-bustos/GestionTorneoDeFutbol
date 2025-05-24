@@ -1,12 +1,10 @@
 package com.TpFinalLaboIII.GestionTorneoDeFutbol.DTOS;
 
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Enums.ROLEUSER;
-import jakarta.persistence.*;
-import lombok.NonNull;
 
 import java.util.Objects;
 
-public class AdmDTO {
+public class UserDTO {
 
     private Long idUsuario;
     private String username;
@@ -14,12 +12,17 @@ public class AdmDTO {
     private String email;
     private ROLEUSER roleuser;
 
-    public AdmDTO(Long idUsuario, String username, String password, String email, ROLEUSER roleuser) {
+    public UserDTO(Long idUsuario, String username, String password, String email, ROLEUSER roleuser) {
         this.idUsuario = idUsuario;
         this.username = username;
         this.password = password;
         this.email = email;
         this.roleuser = roleuser;
+    }
+
+    public UserDTO()
+    {
+
     }
 
     public Long getIdUsuario() {
@@ -76,8 +79,8 @@ public class AdmDTO {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof AdmDTO admDTO)) return false;
-        return Objects.equals(getIdUsuario(), admDTO.getIdUsuario()) && Objects.equals(getUsername(), admDTO.getUsername()) && Objects.equals(getPassword(), admDTO.getPassword()) && Objects.equals(getEmail(), admDTO.getEmail()) && getRoleuser() == admDTO.getRoleuser();
+        if (!(o instanceof UserDTO userDTO)) return false;
+        return Objects.equals(getIdUsuario(), userDTO.getIdUsuario()) && Objects.equals(getUsername(), userDTO.getUsername()) && Objects.equals(getPassword(), userDTO.getPassword()) && Objects.equals(getEmail(), userDTO.getEmail()) && getRoleuser() == userDTO.getRoleuser();
     }
 
     @Override

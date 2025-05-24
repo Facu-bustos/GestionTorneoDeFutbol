@@ -9,9 +9,6 @@ import lombok.*;
 @Entity
 @Table(name = "usuarios")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "tipo_usuario", discriminatorType =  DiscriminatorType.STRING)
-
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
