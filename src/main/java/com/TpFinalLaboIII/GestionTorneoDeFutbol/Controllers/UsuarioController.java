@@ -4,8 +4,10 @@ import com.TpFinalLaboIII.GestionTorneoDeFutbol.DTOS.UserDTO;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.DTOS.ViewUserDTO;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Exeptions.EntityErrors.NotFoundException;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Exeptions.EntityErrors.NotPostException;
+import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.Torneo;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.Usuario;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Services.ServicesUser;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +26,9 @@ public class UsuarioController {
     public UsuarioController(ServicesUser servicesUser) {
         this.servicesUser = servicesUser;
     }
+
+
+    //ENDPOINTS DE USUARIO
 
     @PostMapping("/addUser")
     public ResponseEntity<String>addUser(@RequestBody UserDTO userDTO) throws NotPostException
@@ -58,7 +63,21 @@ public class UsuarioController {
         return servicesUser.listUser();
     }
 
+    @GetMapping("/getUserByEmail")
+    @ResponseBody
+    public ViewUserDTO getUserByEmailPost(@RequestParam String email) throws NotFoundException
+    {
+        return servicesUser.getUserByEmailPost(email);
+    }
 
-    
+    //ENDPOINTS DE USUARIO TORNEO
+
+    @PostMapping("/addTournament")
+    public ResponseEntity<String>addTorneo( @Valid @RequestBody Torneo torneo) throws NotPostException
+    {
+        return servicesUser.addTorneo(torneo);
+    }
+
+     
 
 }

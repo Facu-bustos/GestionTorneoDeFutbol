@@ -4,6 +4,7 @@ import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Enums.ROLEUSER;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Entity
@@ -25,6 +26,7 @@ public class Usuario {
     @Email(message = "Email invalido")
     private String email;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
     private ROLEUSER roleuser;
 
@@ -60,11 +62,11 @@ public class Usuario {
         this.email = email;
     }
 
-    public ROLEUSER getRoleuser() {
+    public @NotNull ROLEUSER getRoleuser() {
         return roleuser;
     }
 
-    public void setRoleuser(ROLEUSER roleuser) {
+    public void setRoleuser(@NotNull ROLEUSER roleuser) {
         this.roleuser = roleuser;
     }
 }

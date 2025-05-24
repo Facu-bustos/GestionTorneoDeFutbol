@@ -3,6 +3,7 @@ package com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Enums.POSICION;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Entity
@@ -17,9 +18,9 @@ public class Jugador {
     private long idJugador;
     @NotBlank
     private String nombre;
-    @NotBlank
+    @NotNull
     private long numeroCamiseta;
-    @NotBlank
+    @NotNull
     @Enumerated(EnumType.STRING)
     private POSICION posicion;
 

@@ -2,8 +2,11 @@ package com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities;
 
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Enums.ESTADOPARTIDO;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -17,13 +20,15 @@ public class Fixture {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private long idFixture;
-    @NonNull
+    @NotNull
     private long golesEquipo1;
-    @NonNull
+    @NotNull
     private long golesEquipo2;
-    @NonNull
-    private Date fechaPartido;
-    @NonNull
+
+    @NotNull
+    private LocalDateTime fechaPartido;
+
+    @NotNull
     @Enumerated(EnumType.STRING)
     private ESTADOPARTIDO estadopartido;
 
