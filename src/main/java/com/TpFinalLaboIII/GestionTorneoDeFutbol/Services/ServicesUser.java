@@ -1,10 +1,13 @@
 package com.TpFinalLaboIII.GestionTorneoDeFutbol.Services;
 
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.DTOS.UserDTO;
+import com.TpFinalLaboIII.GestionTorneoDeFutbol.DTOS.ViewUserDTO;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Exeptions.EntityErrors.NotFoundException;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Exeptions.EntityErrors.NotPostException;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.Usuario;
+import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Enums.ROLEUSER;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Repositories.IRepositoryUser;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +16,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.swing.text.View;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -27,7 +33,7 @@ public class ServicesUser {
 
     //  METODOS
 
-    public ResponseEntity<UserDTO>addUser(@RequestBody UserDTO userDTO) throws NotPostException
+    public ResponseEntity<String>addUser(@RequestBody UserDTO userDTO) throws NotPostException
     {
         boolean emailPresent = getUserByEmail(userDTO.getEmail());
         if(emailPresent)
@@ -36,7 +42,7 @@ public class ServicesUser {
         }
 
         if(userDTO.getUsername()==null || userDTO.getPassword()== null
-                || userDTO.getEmail() == null || userDTO.getRoleuser() == null)
+                || userDTO.getEmail() == null || userDTO.getRoleuser() != ROLEUSER.ADMINISTRADOR)
         {
             throw new NotPostException("Error al ingresar un ADMIN, datos erroneos");
         }
@@ -47,7 +53,7 @@ public class ServicesUser {
         usuario.setPassword(userDTO.getPassword());
         usuario.setRoleuser(userDTO.getRoleuser());
         iRepositoryUser.save(usuario);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.ok("Usuario creado con exito");
     }
 
     public Boolean getUserByEmail(@PathVariable String email)
@@ -60,41 +66,69 @@ public class ServicesUser {
         return false;
     }
 
-    public UserDTO getUsersByID(@PathVariable long id) throws NotFoundException
+    public ViewUserDTO getUsersByID(@PathVariable long id) throws NotFoundException
     {
         Optional<Usuario>userByID=iRepositoryUser.findById(id);
         if(userByID.isEmpty())
         {
             throw new NotFoundException("No se encuentra el ID solicitado");
         }
-        UserDTO userDTO = new UserDTO();
+        ViewUserDTO userDTO = new ViewUserDTO();
         userDTO.setIdUsuario(userByID.get().getIdUsuario());
         userDTO.setUsername(userByID.get().getUsername());
         userDTO.setRoleuser(userByID.get().getRoleuser());
         userDTO.setEmail(userByID.get().getEmail());
-        userDTO.setPassword("NO DISPONIBLE");
         return userDTO;
     }
 
 
 
-    public ResponseEntity<Void> deleteUser(@PathVariable long id) throws NotFoundException
+    public ResponseEntity<String> deleteUser(@PathVariable long id) throws NotFoundException
     {
         Optional<Usuario>user = iRepositoryUser.findById(id);
         if(user.isEmpty())
         {
             throw new NotFoundException("Error, ID no encontrado");
         }
-        Usuario usuario = new Usuario();
-        usuario.setIdUsuario(user.get().getIdUsuario());
-        usuario.setUsername(user.get().getUsername());
-        usuario.setRoleuser(user.get().getRoleuser());
-        usuario.setPassword(user.get().getPassword());
-        usuario.setEmail(user.get().getEmail());
-        iRepositoryUser.delete(usuario);
-        return ResponseEntity.status(HttpStatus.FOUND).build();
+        iRepositoryUser.deleteById(id);
+        return ResponseEntity.ok("Usuario eliminado con exito");
     }
 
+    public ResponseEntity<String>updateUser(@PathVariable long id, @RequestBody UserDTO userDTO) throws NotFoundException
+    {
+        Usuario userById = iRepositoryUser.findById(id)
+                .orElseThrow(() -> new NotFoundException("Error, ID no encontrado"));
+
+        userById.setUsername(userDTO.getUsername());
+        userById.setPassword(userDTO.getPassword());
+        userById.setEmail(userDTO.getEmail());
+        userById.setRoleuser(userDTO.getRoleuser());
+
+        iRepositoryUser.save(userById);
+        return ResponseEntity.ok("Usuario ID " + id + " ACTUALIZADO");
+    }
+
+    public List<ViewUserDTO>listUser() throws NotFoundException
+    {
+        List<Usuario>listUser = iRepositoryUser.findAll();
+        if(listUser.isEmpty())
+        {
+            throw new NotFoundException("No se encuentra la lista de usuarios disponible");
+        }
+
+        List<ViewUserDTO>listUserDTOS = new ArrayList<>();
+
+        for(Usuario u : listUser)
+        {
+            ViewUserDTO viewUserDTO = new ViewUserDTO();
+            viewUserDTO.setIdUsuario(u.getIdUsuario());
+            viewUserDTO.setUsername(u.getUsername());
+            viewUserDTO.setEmail(u.getEmail());
+            viewUserDTO.setRoleuser(u.getRoleuser());
+            listUserDTOS.add(viewUserDTO);
+        }
+        return listUserDTOS;
+    }
 
 
 }

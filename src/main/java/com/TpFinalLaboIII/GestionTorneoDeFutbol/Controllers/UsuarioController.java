@@ -1,6 +1,7 @@
 package com.TpFinalLaboIII.GestionTorneoDeFutbol.Controllers;
 
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.DTOS.UserDTO;
+import com.TpFinalLaboIII.GestionTorneoDeFutbol.DTOS.ViewUserDTO;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Exeptions.EntityErrors.NotFoundException;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Exeptions.EntityErrors.NotPostException;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.Usuario;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -24,24 +26,39 @@ public class UsuarioController {
     }
 
     @PostMapping("/addUser")
-    public ResponseEntity<UserDTO>addUser(@RequestBody UserDTO userDTO) throws NotPostException
+    public ResponseEntity<String>addUser(@RequestBody UserDTO userDTO) throws NotPostException
     {
         return  servicesUser.addUser(userDTO);
     }
 
     @GetMapping("/{id}")
     @ResponseBody
-    public UserDTO getUser(@PathVariable long id) throws NotFoundException {
+    public ViewUserDTO getUser(@PathVariable long id) throws NotFoundException {
         return servicesUser.getUsersByID(id);
     }
 
     @DeleteMapping("/{id}")
     @ResponseBody
-    public ResponseEntity<Void> deleteUser(@PathVariable long id) throws NotFoundException
+    public ResponseEntity<String> deleteUser(@PathVariable long id) throws NotFoundException
     {
        return servicesUser.deleteUser(id);
     }
 
+    @PutMapping("/updateUser/{id}")
+    @ResponseBody
+    public ResponseEntity<String>updateUser(@PathVariable long id, @RequestBody  UserDTO userDTO) throws NotFoundException
+    {
+        return servicesUser.updateUser(id, userDTO);
+    }
 
+    @GetMapping("/listUser")
+    @ResponseBody
+    public List<ViewUserDTO>listViewUserDTO() throws NotFoundException
+    {
+        return servicesUser.listUser();
+    }
+
+
+    
 
 }
