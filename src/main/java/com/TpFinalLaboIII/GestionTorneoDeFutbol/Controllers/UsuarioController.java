@@ -4,6 +4,8 @@ import com.TpFinalLaboIII.GestionTorneoDeFutbol.DTOS.UserDTO;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.DTOS.ViewUserDTO;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Exeptions.EntityErrors.NotFoundException;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Exeptions.EntityErrors.NotPostException;
+import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.DT;
+import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.Equipo;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.Torneo;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.Usuario;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Services.ServicesUser;
@@ -78,6 +80,13 @@ public class UsuarioController {
         return servicesUser.addTorneo(torneo);
     }
 
-     
+
+    //ENDPOINTS DE USUARIO DT-EQUIPOS
+    @PostMapping("/addDtAndTeam")
+    public ResponseEntity<String>addDtAndTeam(@RequestBody Equipo equipo,  @RequestBody DT dt, @PathVariable long id) throws NotFoundException, NotPostException
+    {
+        return servicesUser.addDtAndTeam(equipo, dt,id );
+    }
+
 
 }

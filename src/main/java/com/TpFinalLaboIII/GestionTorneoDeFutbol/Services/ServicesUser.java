@@ -4,10 +4,7 @@ import com.TpFinalLaboIII.GestionTorneoDeFutbol.DTOS.UserDTO;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.DTOS.ViewUserDTO;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Exeptions.EntityErrors.NotFoundException;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Exeptions.EntityErrors.NotPostException;
-import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.Equipo;
-import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.Fixture;
-import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.Torneo;
-import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.Usuario;
+import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.*;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Enums.ESTADOTORNEO;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Enums.ROLEUSER;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Repositories.IRepositoryTournaumet;
@@ -149,20 +146,45 @@ public class ServicesUser {
         }
 
         Torneo torneo1 = new Torneo();
-        List<Fixture>fixture = new ArrayList<>();
-        List<Equipo>equipolist = new ArrayList<>();
         torneo1.setNombre(torneo.getNombre());
         torneo1.setFechaInicio(torneo.getFechaInicio());
         torneo1.setFechaFin(torneo.getFechaFin());
         torneo1.setEstadotorneo(ESTADOTORNEO.PENDIENTE);
-        torneo1.setEquipos(equipolist);
-        torneo1.setFixture(fixture);
+        torneo1.setEquipos(torneo.getEquipos());
+        torneo1.setFixture(torneo.getFixture());
         iRepositoryTournaumet.save(torneo1);
         return ResponseEntity.ok("Torneo " + torneo.getNombre() + " CREADO CON EXITO" );
     }
 
 
+    public ResponseEntity<String>addDtAndTeam(@RequestBody Equipo equipo, @RequestBody DT dt, @PathVariable long id) throws NotFoundException, NotPostException
+    {
+        Torneo torneo = iRepositoryTournaumet.findById(id).orElseThrow(() -> new NotPostException("Error, id de torneo inexistente"));
 
+        if(dt.getNombre()== null || dt.getEstilodejuego() == null || dt.getRoleuser() != ROLEUSER.DT)
+        {
+            throw new NotPostException("Error en los datos del DT, NOMBRE - ESTILO DE JUEGO - ROLE");
+        }
+
+        if(equipo.getNombre()== null)
+        {
+            throw new NotPostException("Error en los datos del equipo. Falta un nombre");
+        }
+
+        DT nuevoDT = new DT();
+        nuevoDT.setNombre(dt.getNombre());
+        nuevoDT.setRoleuser(dt.getRoleuser());
+        nuevoDT.setEstilodejuego(dt.getEstilodejuego());
+
+        Equipo equipo1 = new Equipo();
+        equipo1.setNombre(equipo.getNombre());
+        equipo1.setNombreTorneo(torneo);
+
+        return ResponseEntity.ok("");
+
+
+        //falta temrinar la logica. CREAER DT VERIFICAR EL  TORNEO- CREAER EL EQUIPO- ASIGNAR EL TORNEO AL EQUIPO
+    }
 
 
 }
