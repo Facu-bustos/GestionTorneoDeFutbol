@@ -8,6 +8,7 @@ import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.DT;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.Equipo;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.Torneo;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.Usuario;
+import com.TpFinalLaboIII.GestionTorneoDeFutbol.Services.ServicesTorneo;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Services.ServicesUser;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 public class UsuarioController {
 
     @Autowired
@@ -71,22 +72,4 @@ public class UsuarioController {
     {
         return servicesUser.getUserByEmailPost(email);
     }
-
-    //ENDPOINTS DE USUARIO TORNEO
-
-    @PostMapping("/addTournament")
-    public ResponseEntity<String>addTorneo( @Valid @RequestBody Torneo torneo) throws NotPostException
-    {
-        return servicesUser.addTorneo(torneo);
-    }
-
-
-    //ENDPOINTS DE USUARIO DT-EQUIPOS
-    @PostMapping("/addDtAndTeam")
-    public ResponseEntity<String>addDtAndTeam(@RequestBody Equipo equipo,  @RequestBody DT dt, @PathVariable long id) throws NotFoundException, NotPostException
-    {
-        return servicesUser.addDtAndTeam(equipo, dt,id );
-    }
-
-
 }

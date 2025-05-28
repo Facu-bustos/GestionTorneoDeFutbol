@@ -31,17 +31,14 @@ import java.util.Optional;
 public class ServicesUser {
     @Autowired
     private final IRepositoryUser iRepositoryUser;
-    @Autowired
-    private final IRepositoryTournaumet iRepositoryTournaumet;
 
-    public ServicesUser(IRepositoryUser iRepositoryUser, IRepositoryTournaumet iRepositoryTournaumet) {
+
+    public ServicesUser(IRepositoryUser iRepositoryUser) {
         this.iRepositoryUser = iRepositoryUser;
-        this.iRepositoryTournaumet = iRepositoryTournaumet;
     }
 
 
     //  METODOS
-
     public ResponseEntity<String> addUser(@RequestBody UserDTO userDTO) throws NotPostException {
         boolean emailPresent = getUserByEmail(userDTO.getEmail());
         if (emailPresent) {
@@ -136,55 +133,7 @@ public class ServicesUser {
         viewUserDTO.setRoleuser(userByEmail.getRoleuser());
         return viewUserDTO;
     }
-
-    public ResponseEntity<String>addTorneo(@Valid @RequestBody Torneo torneo) throws NotPostException {
-
-        LocalDateTime day = LocalDateTime.now();
-        if(torneo.getNombre() == null || torneo.getFechaInicio().isBefore(day) || torneo.getEstadotorneo() != ESTADOTORNEO.PENDIENTE)
-        {
-            throw new NotPostException("Error en los datos del torneo. No se puede dar de alta");
-        }
-
-        Torneo torneo1 = new Torneo();
-        torneo1.setNombre(torneo.getNombre());
-        torneo1.setFechaInicio(torneo.getFechaInicio());
-        torneo1.setFechaFin(torneo.getFechaFin());
-        torneo1.setEstadotorneo(ESTADOTORNEO.PENDIENTE);
-        torneo1.setEquipos(torneo.getEquipos());
-        torneo1.setFixture(torneo.getFixture());
-        iRepositoryTournaumet.save(torneo1);
-        return ResponseEntity.ok("Torneo " + torneo.getNombre() + " CREADO CON EXITO" );
     }
 
 
-    public ResponseEntity<String>addDtAndTeam(@RequestBody Equipo equipo, @RequestBody DT dt, @PathVariable long id) throws NotFoundException, NotPostException
-    {
-        Torneo torneo = iRepositoryTournaumet.findById(id).orElseThrow(() -> new NotPostException("Error, id de torneo inexistente"));
 
-        if(dt.getNombre()== null || dt.getEstilodejuego() == null || dt.getRoleuser() != ROLEUSER.DT)
-        {
-            throw new NotPostException("Error en los datos del DT, NOMBRE - ESTILO DE JUEGO - ROLE");
-        }
-
-        if(equipo.getNombre()== null)
-        {
-            throw new NotPostException("Error en los datos del equipo. Falta un nombre");
-        }
-
-        DT nuevoDT = new DT();
-        nuevoDT.setNombre(dt.getNombre());
-        nuevoDT.setRoleuser(dt.getRoleuser());
-        nuevoDT.setEstilodejuego(dt.getEstilodejuego());
-
-        Equipo equipo1 = new Equipo();
-        equipo1.setNombre(equipo.getNombre());
-        equipo1.setNombreTorneo(torneo);
-
-        return ResponseEntity.ok("");
-
-
-        //falta temrinar la logica. CREAER DT VERIFICAR EL  TORNEO- CREAER EL EQUIPO- ASIGNAR EL TORNEO AL EQUIPO
-    }
-
-
-}
