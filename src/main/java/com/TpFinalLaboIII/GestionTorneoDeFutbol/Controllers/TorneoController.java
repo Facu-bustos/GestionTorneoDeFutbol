@@ -1,6 +1,7 @@
 package com.TpFinalLaboIII.GestionTorneoDeFutbol.Controllers;
 
 
+import com.TpFinalLaboIII.GestionTorneoDeFutbol.DTOS.EquipoDTO;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.DTOS.TorneoDTO;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Exeptions.EntityErrors.NotFoundException;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Exeptions.EntityErrors.NotPostException;
@@ -10,6 +11,8 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/tournament")
@@ -24,7 +27,6 @@ public class TorneoController {
 
 
     //ENDPOINTS DE TORNEO
-
     @PostMapping("/addTournament")
     public ResponseEntity<String> addTorneo(@Valid @RequestBody TorneoDTO torneo) throws NotPostException
     {
@@ -50,5 +52,13 @@ public class TorneoController {
     {
         return servicesTorneo.updateTorneoById(id,torneoDTO);
     }
+
+  /*  //getlistarTorneos
+    @GetMapping("getListTeam/{idTorneo}")
+    @ResponseBody
+    public List<EquipoDTO> getEquipoDTO(@PathVariable long idTorneo)throws NotFoundException
+    {
+        return ServicesTorneo.getListEquipoDTO();
+    }*/
 
 }

@@ -1,5 +1,6 @@
 package com.TpFinalLaboIII.GestionTorneoDeFutbol.Services;
 
+import com.TpFinalLaboIII.GestionTorneoDeFutbol.DTOS.EquipoDTO;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.DTOS.TorneoDTO;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Exeptions.EntityErrors.NotFoundException;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Exeptions.EntityErrors.NotPostException;
@@ -10,6 +11,8 @@ import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Enums.ESTADOTORNEO;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Enums.ROLEUSER;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Repositories.IRepositoryTournaumet;
 import jakarta.validation.Valid;
+import jdk.dynalink.linker.LinkerServices;
+import org.springframework.beans.NotReadablePropertyException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -24,10 +28,12 @@ public class ServicesTorneo  {
 
     @Autowired
     private final IRepositoryTournaumet iRepositoryTournaumet;
+    @Autowired
+    private final ServicesEquipo servicesEquipo;
 
-
-    public ServicesTorneo(IRepositoryTournaumet iRepositoryTournaumet) {
+    public ServicesTorneo(IRepositoryTournaumet iRepositoryTournaumet, ServicesEquipo servicesEquipo) {
         this.iRepositoryTournaumet = iRepositoryTournaumet;
+        this.servicesEquipo = servicesEquipo;
     }
 
 
@@ -59,6 +65,23 @@ public class ServicesTorneo  {
         torneoDTO.setFechaInicio(torneo.getFechaInicio());
         torneoDTO.setFechaFin(torneo.getFechaFin());
         return torneoDTO;
+    }
+
+   public Torneo torneoExistAndPresent(@PathVariable long id) throws  NotFoundException
+   {
+       Torneo torneo = iRepositoryTournaumet.findById(id).orElseThrow(() -> new NotFoundException("Error, el ID del torneo no se encuenta en la BDD"));
+       return torneo;
+   }
+
+
+    public boolean torneoExists(@PathVariable long id)
+    {
+       Optional<Torneo> torneoExists = iRepositoryTournaumet.findById(id);
+       if(torneoExists.isPresent())
+       {
+           return true;
+       }
+       return false;
     }
 
     public ResponseEntity<String> deleteTorneoById(@PathVariable long id) throws NotFoundException
@@ -94,5 +117,7 @@ public class ServicesTorneo  {
      iRepositoryTournaumet.save(torneo.get());
      return ResponseEntity.ok("Torneo ID: " + id + " Actualizado con exito");
     }
+
+    //
 
 }

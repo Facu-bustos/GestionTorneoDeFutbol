@@ -8,7 +8,6 @@ import org.apache.catalina.LifecycleState;
 import java.util.List;
 
 @Entity
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -38,5 +37,59 @@ public class Equipo {
     @JoinColumn(name = "id_DT", referencedColumnName = "idDT")
     private DT dt;
 
-    //agregar capitan... no saber si boolean o asignado
+    public long getIdEquipo() {
+        return idEquipo;
+    }
+
+    public void setIdEquipo(long idEquipo) {
+        this.idEquipo = idEquipo;
+    }
+
+    public @NotBlank String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(@NotBlank String nombre) {
+        this.nombre = nombre;
+    }
+
+    public Torneo getNombreTorneo() {
+        return nombreTorneo;
+    }
+
+    public void setNombreTorneo(Torneo nombreTorneo) {
+        this.nombreTorneo = nombreTorneo;
+    }
+
+    public List<Jugador> getJugadores() {
+        return jugadores;
+    }
+
+    public void setJugadores(List<Jugador> jugadores) {
+        this.jugadores = jugadores;
+    }
+
+    public List<Fixture> getFixtureComoLocal() {
+        return fixtureComoLocal;
+    }
+
+    public void setFixtureComoLocal(List<Fixture> fixtureComoLocal) {
+        this.fixtureComoLocal = fixtureComoLocal;
+    }
+
+    public List<Fixture> getFixtureComoVisitante() {
+        return fixtureComoVisitante;
+    }
+
+    public void setFixtureComoVisitante(List<Fixture> fixtureComoVisitante) {
+        this.fixtureComoVisitante = fixtureComoVisitante;
+    }
+
+    public DT getDt() {
+        return dt;
+    }
+
+    public void setDt(DT dt) {
+        this.dt = dt;
+    }
 }

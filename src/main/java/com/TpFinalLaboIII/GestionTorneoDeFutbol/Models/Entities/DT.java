@@ -8,7 +8,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Entity
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -31,4 +30,44 @@ public class DT{
     @NotNull
     @Enumerated(EnumType.STRING)
     private ROLEUSER roleuser ;
+
+    public long getIdDT() {
+        return idDT;
+    }
+
+    public void setIdDT(long idDT) {
+        this.idDT = idDT;
+    }
+
+    public @NotBlank String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(@NotBlank String nombre) {
+        this.nombre = nombre;
+    }
+
+    public Equipo getEquipo() {
+        return equipo;
+    }
+
+    public void setEquipo(Equipo equipo) {
+        this.equipo = equipo;
+    }
+
+    public @NotNull ESTILODEJUEGO getEstilodejuego() {
+        return estilodejuego;
+    }
+
+    public void setEstilodejuego(@NotNull ESTILODEJUEGO estilodejuego) {
+        this.estilodejuego = estilodejuego;
+    }
+
+    public @NotNull ROLEUSER getRoleuser() {
+        return roleuser;
+    }
+
+    public void setRoleuser(@NotNull ROLEUSER roleuser) {
+        this.roleuser = roleuser;
+    }
 }
