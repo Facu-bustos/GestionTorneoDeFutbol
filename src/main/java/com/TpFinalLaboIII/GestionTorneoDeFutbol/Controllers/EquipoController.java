@@ -30,12 +30,17 @@ public class EquipoController {
         return servicesEquipo.createDtAndTeam(equipoDTO,idTorneo);
     }
 
-
     @GetMapping("/listTeam")
     @ResponseBody
     public List<EquipoDTO> getListTeamDTO() throws NotFoundException
     {
         return servicesEquipo.getListTeam();
     }
-
+  /*
+    @PutMapping("{idEquipo}")
+    public ResponseEntity<String>updateEquipo(@RequestBody EquipoDTOconDtDTO equipoDTO)
+    {
+        return servicesEquipo.updateTeamDTO();
+    }
+*/
 }

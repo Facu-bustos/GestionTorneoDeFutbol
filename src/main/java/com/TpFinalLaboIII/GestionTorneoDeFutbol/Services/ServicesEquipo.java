@@ -83,6 +83,21 @@ public class ServicesEquipo {
         return equiposDTO;
     }
 
+   /* public ResponseEntity<String>updateTeamDTO(@RequestBody EquipoDTOconDtDTO equipoDTO, @PathVariable long idEquipo) throws NotFoundException
+    {
+        Equipo equipo = iRepositoryTeam.findById(idEquipo)
+                .orElseThrow(() -> new NotFoundException("Error, ID DE EQUIPO INEXISTENTE"));
+
+        equipo.setNombre(equipoDTO.getEquipoDTO().getNombreEquipo());
 
 
+                // private long idDT;
+        //    private String nombreDT;
+        //    private ESTILODEJUEGO estilodejuegoDT;
+        //    private ROLEUSER roleuserDT ;
+        //    private EquipoDTO equipoDTO;
+
+        return ResponseEntity.ok("Datos del equipo:" + idEquipo + " Actualizados");
+    }
+*/
 }
