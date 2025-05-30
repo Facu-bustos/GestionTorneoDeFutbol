@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,12 +29,10 @@ public class ServicesTorneo  {
 
     @Autowired
     private final IRepositoryTournaumet iRepositoryTournaumet;
-    @Autowired
-    private final ServicesEquipo servicesEquipo;
 
-    public ServicesTorneo(IRepositoryTournaumet iRepositoryTournaumet, ServicesEquipo servicesEquipo) {
+
+    public ServicesTorneo(IRepositoryTournaumet iRepositoryTournaumet) {
         this.iRepositoryTournaumet = iRepositoryTournaumet;
-        this.servicesEquipo = servicesEquipo;
     }
 
 
@@ -118,6 +117,28 @@ public class ServicesTorneo  {
      return ResponseEntity.ok("Torneo ID: " + id + " Actualizado con exito");
     }
 
-    //
+    public List<TorneoDTO>getListTorneo() throws NotFoundException {
+
+
+        List<Torneo>torneos = iRepositoryTournaumet.findAll();
+        if(torneos.isEmpty())
+        {
+            throw new NotFoundException("Error, no se encuentran Torneos Disponibles.. Cargue un torneo");
+        }
+
+        List<TorneoDTO>listaDeTorneosDTO = new ArrayList<>();
+        for(Torneo t: torneos)
+        {
+            TorneoDTO torneoDTO = new TorneoDTO();
+            torneoDTO.setIdTorneo(t.getIdTorneo());
+            torneoDTO.setNombre(t.getNombre());
+            torneoDTO.setFechaInicio(t.getFechaInicio());
+            torneoDTO.setFechaFin(t.getFechaFin());
+            torneoDTO.setEstadotorneo(t.getEstadotorneo());
+            listaDeTorneosDTO.add(torneoDTO);
+        }
+        return listaDeTorneosDTO;
+    }
+
 
 }

@@ -1,6 +1,8 @@
 package com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities;
 
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Enums.ESTADOTORNEO;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -15,7 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@ToString
+@ToString()
 public class Torneo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,6 +36,7 @@ public class Torneo {
     private ESTADOTORNEO estadotorneo;
 
     // Bidireccional
+    @JsonManagedReference
     @OneToMany(mappedBy = "nombreTorneo" , cascade = CascadeType.PERSIST)//  <-- podemos usar optional false
     //para asegurar que si o si hay que cargar equipos
     private List<Equipo> equipos;

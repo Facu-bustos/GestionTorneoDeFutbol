@@ -53,12 +53,16 @@ public class TorneoController {
         return servicesTorneo.updateTorneoById(id,torneoDTO);
     }
 
-  /*  //getlistarTorneos
-    @GetMapping("getListTeam/{idTorneo}")
+   //getlistarTorneos
+
+    @GetMapping("/getListTorneo")
     @ResponseBody
-    public List<EquipoDTO> getEquipoDTO(@PathVariable long idTorneo)throws NotFoundException
+    public List<TorneoDTO> getListTeam()throws NotFoundException
     {
-        return ServicesTorneo.getListEquipoDTO();
-    }*/
+        return servicesTorneo.getListTorneo();
+    }
+
+
+
 
 }

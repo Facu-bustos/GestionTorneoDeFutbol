@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/team")
 
@@ -26,6 +28,14 @@ public class EquipoController {
     public ResponseEntity<String>addTeam(@RequestBody EquipoDTOconDtDTO equipoDTO, @PathVariable long idTorneo) throws NotPostException, NotFoundException
     {
         return servicesEquipo.createDtAndTeam(equipoDTO,idTorneo);
+    }
+
+
+    @GetMapping("/listTeam")
+    @ResponseBody
+    public List<EquipoDTO> getListTeamDTO() throws NotFoundException
+    {
+        return servicesEquipo.getListTeam();
     }
 
 }

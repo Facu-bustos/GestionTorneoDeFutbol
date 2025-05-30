@@ -1,5 +1,6 @@
 package com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -19,6 +20,7 @@ public class Equipo {
     @NotBlank
     private String nombre;
 
+    @JsonBackReference
     @ManyToOne()
     @JoinColumn(name = "id_Torneo", referencedColumnName = "idTorneo")
     private Torneo nombreTorneo;
