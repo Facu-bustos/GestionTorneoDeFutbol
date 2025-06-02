@@ -133,7 +133,7 @@ public class ServicesUser {
         viewUserDTO.setRoleuser(userByEmail.getRoleuser());
         return viewUserDTO;
     }
-    }
+}
 
 
 

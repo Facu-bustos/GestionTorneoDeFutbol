@@ -2,14 +2,17 @@ package com.TpFinalLaboIII.GestionTorneoDeFutbol.Services;
 
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.DTOS.EquipoDTO;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.DTOS.EquipoDTOconDtDTO;
+import com.TpFinalLaboIII.GestionTorneoDeFutbol.DTOS.JugadorDTO;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.DTOS.TorneoDTO;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Exeptions.EntityErrors.NotFoundException;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Exeptions.EntityErrors.NotPostException;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.DT;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.Equipo;
+import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.Jugador;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.Torneo;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Enums.ROLEUSER;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Repositories.IRepositoryDt;
+import com.TpFinalLaboIII.GestionTorneoDeFutbol.Repositories.IRepositoryPlayer;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Repositories.IRepositoryTeam;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Repositories.IRepositoryTournaumet;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,11 +34,16 @@ public class ServicesEquipo {
     private final ServicesDt servicesDt;
     @Autowired
     private final ServicesTorneo servicesTorneo;
+    @Autowired
+    private final IRepositoryPlayer iRepositoryPlayer;
 
-    public ServicesEquipo(IRepositoryTeam iRepositoryTeam, ServicesDt servicesDt, ServicesTorneo servicesTorneo) {
+
+    public ServicesEquipo(IRepositoryTeam iRepositoryTeam, ServicesDt servicesDt, ServicesTorneo servicesTorneo, IRepositoryPlayer iRepositoryPlayer) {
         this.iRepositoryTeam = iRepositoryTeam;
         this.servicesDt = servicesDt;
         this.servicesTorneo = servicesTorneo;
+        this.iRepositoryPlayer = iRepositoryPlayer;
+
     }
 
     public ResponseEntity<String> createDtAndTeam(@RequestBody EquipoDTOconDtDTO equipoDTOconDtDTO, @PathVariable long idTorneo) throws NotFoundException, NotPostException
@@ -83,21 +91,60 @@ public class ServicesEquipo {
         return equiposDTO;
     }
 
-   /* public ResponseEntity<String>updateTeamDTO(@RequestBody EquipoDTOconDtDTO equipoDTO, @PathVariable long idEquipo) throws NotFoundException
+    public ResponseEntity<String>updateDtTeam(@PathVariable Long idEquipo, @PathVariable long idDt) throws NotFoundException
     {
         Equipo equipo = iRepositoryTeam.findById(idEquipo)
                 .orElseThrow(() -> new NotFoundException("Error, ID DE EQUIPO INEXISTENTE"));
+        DT dt = servicesDt.getDt(idDt);
 
-        equipo.setNombre(equipoDTO.getEquipoDTO().getNombreEquipo());
+        Optional<Equipo> equipoConDT= iRepositoryTeam.findByDt(dt);
+        if(equipoConDT.isPresent())
+        {
+            Equipo equipoExistente = equipoConDT.get();
+            equipoExistente.setDt(null);
+            iRepositoryTeam.save(equipoExistente);
+        }
+        equipo.setDt(dt);
+        iRepositoryTeam.save(equipo);
 
-
-                // private long idDT;
-        //    private String nombreDT;
-        //    private ESTILODEJUEGO estilodejuegoDT;
-        //    private ROLEUSER roleuserDT ;
-        //    private EquipoDTO equipoDTO;
-
-        return ResponseEntity.ok("Datos del equipo:" + idEquipo + " Actualizados");
+        return ResponseEntity.ok("Datos del equipo:" + idEquipo + "DT ACTUALIZADO");
     }
-*/
+
+    public ResponseEntity<String>DeleteTeam(@PathVariable long idEquipo) throws NotFoundException
+    {
+        Equipo equipo = iRepositoryTeam.findById(idEquipo).orElseThrow(() -> new NotFoundException("Error el equipo no se encuenta en la base de datos"));
+        equipo.setDt(null);
+        for(Jugador j: equipo.getJugadores())
+        {
+            iRepositoryPlayer.delete(j);
+        }
+        iRepositoryTeam.delete(equipo);
+        return ResponseEntity.ok("Equipo eliminado de la base de datos.");
+    }
+
+    //OPTIONALS
+    public Optional<Equipo>teamByID(Long idEquipo)
+    {
+        Optional<Equipo>equipoById= iRepositoryTeam.findByIdEquipo(idEquipo);
+        return equipoById;
+    }
+
+    public List<JugadorDTO> getListTeamAll(@PathVariable long idEquipo) throws NotFoundException
+    {
+        List<JugadorDTO>listAllEquipoDTO = new ArrayList<>();
+
+        Equipo equipo = iRepositoryTeam.findByIdEquipo(idEquipo).orElseThrow(() -> new NotFoundException("Error, el ID del equipo no se encuenta en la Base de datos"));
+        for(Jugador j : equipo.getJugadores())
+        {
+            JugadorDTO nuevoJDto = new JugadorDTO();
+            nuevoJDto.setNombre(j.getNombre());
+            nuevoJDto.setPosicion(j.getPosicion());
+            nuevoJDto.setIdEquipo(j.getEquipo().getIdEquipo());
+            nuevoJDto.setIdJugador(j.getIdJugador());
+            nuevoJDto.setNumeroCamiseta(j.getNumeroCamiseta());
+            listAllEquipoDTO.add(nuevoJDto);
+        }
+        return listAllEquipoDTO;
+    }
+
 }
