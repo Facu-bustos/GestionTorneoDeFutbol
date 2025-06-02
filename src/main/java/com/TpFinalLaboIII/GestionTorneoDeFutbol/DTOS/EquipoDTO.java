@@ -6,15 +6,25 @@ public class EquipoDTO {
     private long idEquipo;
     private String nombreEquipo;
     private String nombreTorneo;
+    private long idTorneo;
 
-    public EquipoDTO(long idEquipo, String nombreEquipo, String nombreTorneo) {
+    public EquipoDTO(long idEquipo, String nombreEquipo, String nombreTorneo, long idTorneo) {
         this.idEquipo = idEquipo;
         this.nombreEquipo = nombreEquipo;
         this.nombreTorneo = nombreTorneo;
+        this.idTorneo = idTorneo;
     }
 
     public EquipoDTO() {
 
+    }
+
+    public long getIdTorneo() {
+        return idTorneo;
+    }
+
+    public void setIdTorneo(long idTorneo) {
+        this.idTorneo = idTorneo;
     }
 
     public long getIdEquipo() {

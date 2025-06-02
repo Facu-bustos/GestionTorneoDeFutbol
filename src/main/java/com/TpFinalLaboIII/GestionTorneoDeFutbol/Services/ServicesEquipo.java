@@ -86,6 +86,7 @@ public class ServicesEquipo {
             equipoDTO.setIdEquipo(e.getIdEquipo());
             equipoDTO.setNombreEquipo(e.getNombre());
             equipoDTO.setNombreTorneo(e.getNombreTorneo().getNombre());
+            equipoDTO.setIdTorneo(e.getNombreTorneo().getIdTorneo());
             equiposDTO.add(equipoDTO);
         }
         return equiposDTO;

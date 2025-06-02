@@ -20,7 +20,7 @@ public class DT{
     private String nombre;
 
     //Relacion 1 a 1
-    @OneToOne(mappedBy = "dt", cascade = CascadeType.PERSIST)
+    @OneToOne(mappedBy = "dt", cascade = CascadeType.ALL , orphanRemoval = true)
     private Equipo equipo;
 
     @NotNull

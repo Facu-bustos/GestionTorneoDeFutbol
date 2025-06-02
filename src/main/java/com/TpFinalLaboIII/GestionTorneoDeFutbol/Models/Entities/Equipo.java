@@ -25,13 +25,13 @@ public class Equipo {
     @JoinColumn(name = "id_Torneo", referencedColumnName = "idTorneo")
     private Torneo nombreTorneo;
 
-    @OneToMany(mappedBy = "equipo",cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @OneToMany(mappedBy = "equipo",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Jugador> jugadores;
 
-    @OneToMany(mappedBy = "local",cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "local",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Fixture>fixtureComoLocal;
 
-    @OneToMany(mappedBy = "visitante",cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "visitante",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Fixture>fixtureComoVisitante;
 
     //Relacion 1 a 1

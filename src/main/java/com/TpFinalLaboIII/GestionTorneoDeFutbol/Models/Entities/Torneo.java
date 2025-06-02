@@ -37,11 +37,11 @@ public class Torneo {
 
     // Bidireccional
     @JsonManagedReference
-    @OneToMany(mappedBy = "nombreTorneo" , cascade = CascadeType.PERSIST)//  <-- podemos usar optional false
+    @OneToMany(mappedBy = "nombreTorneo" , cascade = CascadeType.ALL, orphanRemoval = true)//  <-- podemos usar optional false
     //para asegurar que si o si hay que cargar equipos
     private List<Equipo> equipos;
     //Bidireccional
-    @OneToMany(mappedBy = "nombreTorneo", cascade = CascadeType.PERSIST) //  <-- podemos usar optional false
+    @OneToMany(mappedBy = "nombreTorneo", cascade = CascadeType.ALL, orphanRemoval = true) //  <-- podemos usar optional false
     //para asegurar que si o si hay que cargar un fixture
     private List<Fixture>fixture;
 

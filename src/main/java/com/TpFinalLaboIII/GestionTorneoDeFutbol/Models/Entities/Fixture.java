@@ -48,6 +48,6 @@ public class Fixture {
     private Torneo nombreTorneo;
 
     //birideccional
-    @OneToMany(mappedBy = "fixture",cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "fixture",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<EstadisticaGoleador> goleadores;
 }
