@@ -60,13 +60,13 @@ public class ServicesEquipo {
         Boolean torneoExists = servicesTorneo.torneoExists(idTorneo);
         if(!torneoExists)
         {
-            throw new NotFoundException("El ID no corresponde a un torneo existente");
+            throw new NotFoundException("El ID no corresponde a un torneo existente y no puede agregar equipos");
         }
 
         Torneo torneo = servicesTorneo.torneoExistAndPresent(idTorneo);
         if(torneo.getEquipos() != null && torneo.getEquipos().size()>=4)
         {
-            throw new NotPostException("Ya hay 10 equipos en el torneo");
+            throw new NotPostException("Ya hay 4 equipos en el torneo");
         }
 
         DT nuevoDt = servicesDt.createDT(equipoDTOconDtDTO);
@@ -163,9 +163,6 @@ public class ServicesEquipo {
 
         return listAllEquipoDTO;
     }
-
-
-
 
     //OPTIONALS
     public Optional<Equipo>teamByID(Long idEquipo)

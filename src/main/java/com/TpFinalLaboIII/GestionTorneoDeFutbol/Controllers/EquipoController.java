@@ -17,7 +17,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/team")
-
 public class EquipoController {
     @Autowired
     private final ServicesEquipo servicesEquipo;

@@ -7,8 +7,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
 @ToString
 public class Jugador {
