@@ -11,7 +11,6 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -50,4 +49,79 @@ public class Fixture {
     //birideccional
     @OneToMany(mappedBy = "fixture",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<EstadisticaGoleador> goleadores;
+
+
+    public long getIdFixture() {
+        return idFixture;
+    }
+
+    public void setIdFixture(long idFixture) {
+        this.idFixture = idFixture;
+    }
+
+    @NotNull
+    public long getGolesEquipo1() {
+        return golesEquipo1;
+    }
+
+    public void setGolesEquipo1(@NotNull long golesEquipo1) {
+        this.golesEquipo1 = golesEquipo1;
+    }
+
+    @NotNull
+    public long getGolesEquipo2() {
+        return golesEquipo2;
+    }
+
+    public void setGolesEquipo2(@NotNull long golesEquipo2) {
+        this.golesEquipo2 = golesEquipo2;
+    }
+
+    public @NotNull LocalDateTime getFechaPartido() {
+        return fechaPartido;
+    }
+
+    public void setFechaPartido(@NotNull LocalDateTime fechaPartido) {
+        this.fechaPartido = fechaPartido;
+    }
+
+    public @NotNull ESTADOPARTIDO getEstadopartido() {
+        return estadopartido;
+    }
+
+    public void setEstadopartido(@NotNull ESTADOPARTIDO estadopartido) {
+        this.estadopartido = estadopartido;
+    }
+
+    public Equipo getLocal() {
+        return local;
+    }
+
+    public void setLocal(Equipo local) {
+        this.local = local;
+    }
+
+    public Equipo getVisitante() {
+        return visitante;
+    }
+
+    public void setVisitante(Equipo visitante) {
+        this.visitante = visitante;
+    }
+
+    public Torneo getNombreTorneo() {
+        return nombreTorneo;
+    }
+
+    public void setNombreTorneo(Torneo nombreTorneo) {
+        this.nombreTorneo = nombreTorneo;
+    }
+
+    public List<EstadisticaGoleador> getGoleadores() {
+        return goleadores;
+    }
+
+    public void setGoleadores(List<EstadisticaGoleador> goleadores) {
+        this.goleadores = goleadores;
+    }
 }
