@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/player")
 public class JugadorController {
@@ -20,13 +22,42 @@ public class JugadorController {
         this.servicesJugador = servicesJugador;
     }
 
-    @PostMapping("addPlayer")
+    @PostMapping("/addPlayer")
     public ResponseEntity<String>AssignamentPlayerToTeam(@RequestBody JugadorDTO jugador) throws NotPostException, NotFoundException
     {
         return servicesJugador.addPlayerToTeam(jugador);
     }
 
+    @PostMapping("/add/List/Player")
+    public ResponseEntity<String>AssignamentListPlayerToTeam(@RequestBody List<JugadorDTO> jugadorDTOList) throws NotFoundException, NotPostException
+    {
+        return servicesJugador.addListPlayerToTeam(jugadorDTOList);
+    }
 
+    @GetMapping("/get/player/byID/{idJugador}")
+    @ResponseBody
+    public JugadorDTO getPlayerDTO(@PathVariable long idJugador) throws NotFoundException
+    {
+        return servicesJugador.getPlayerDTO(idJugador);
+    }
 
+    @PutMapping("/update/player/{idPlayer}")
+    public ResponseEntity<String>updatePlayer(@PathVariable long idPlayer, @RequestBody JugadorDTO jugadorDTO) throws NotPostException, NotFoundException
+    {
+        return servicesJugador.updatePlayer(idPlayer,jugadorDTO);
+    }
+
+    @DeleteMapping("delete/player/byID/{idPlayer}")
+    public ResponseEntity<String>deletePlayer(@PathVariable long idPlayer) throws NotFoundException
+    {
+        return servicesJugador.deletePlayer(idPlayer);
+    }
+
+    @GetMapping("/allPlayers")
+    @ResponseBody
+    public List<JugadorDTO>allPlayers() throws NotFoundException
+    {
+        return servicesJugador.getAllPlayer();
+    }
 
 }

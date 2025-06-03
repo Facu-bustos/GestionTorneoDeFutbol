@@ -54,7 +54,6 @@ public class TorneoController {
     }
 
    //getlistarTorneos
-
     @GetMapping("/getListTorneo")
     @ResponseBody
     public List<TorneoDTO> getListTeam()throws NotFoundException

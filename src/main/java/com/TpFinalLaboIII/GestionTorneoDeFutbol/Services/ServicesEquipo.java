@@ -10,6 +10,7 @@ import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.DT;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.Equipo;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.Jugador;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.Torneo;
+import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Enums.ESTADOTORNEO;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Enums.ROLEUSER;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Repositories.IRepositoryDt;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Repositories.IRepositoryPlayer;
@@ -36,19 +37,22 @@ public class ServicesEquipo {
     private final ServicesTorneo servicesTorneo;
     @Autowired
     private final IRepositoryPlayer iRepositoryPlayer;
+    @Autowired
+    private final IRepositoryTournaumet iRepositoryTournaumet;
 
 
-    public ServicesEquipo(IRepositoryTeam iRepositoryTeam, ServicesDt servicesDt, ServicesTorneo servicesTorneo, IRepositoryPlayer iRepositoryPlayer) {
+    public ServicesEquipo(IRepositoryTeam iRepositoryTeam, ServicesDt servicesDt, ServicesTorneo servicesTorneo, IRepositoryPlayer iRepositoryPlayer, IRepositoryTournaumet iRepositoryTournaumet) {
         this.iRepositoryTeam = iRepositoryTeam;
         this.servicesDt = servicesDt;
         this.servicesTorneo = servicesTorneo;
         this.iRepositoryPlayer = iRepositoryPlayer;
-
+        this.iRepositoryTournaumet = iRepositoryTournaumet;
     }
 
     public ResponseEntity<String> createDtAndTeam(@RequestBody EquipoDTOconDtDTO equipoDTOconDtDTO, @PathVariable long idTorneo) throws NotFoundException, NotPostException
     {
-        if(equipoDTOconDtDTO.getEquipoDTO().getNombreEquipo() == null || equipoDTOconDtDTO.getEstilodejuegoDT() == null || equipoDTOconDtDTO.getRoleuserDT() != ROLEUSER.DT || equipoDTOconDtDTO.getNombreDT() == null)
+        if(equipoDTOconDtDTO.getEquipoDTO().getNombreEquipo() == null || equipoDTOconDtDTO.getEstilodejuegoDT() == null ||
+                equipoDTOconDtDTO.getRoleuserDT() != ROLEUSER.DT || equipoDTOconDtDTO.getNombreDT() == null)
         {
             throw new NotPostException("Error en los de EQUIPODTO, NOMBRES - ESTILO DE JUEGO - ROLE");
         }
@@ -60,14 +64,26 @@ public class ServicesEquipo {
         }
 
         Torneo torneo = servicesTorneo.torneoExistAndPresent(idTorneo);
+        if(torneo.getEquipos() != null && torneo.getEquipos().size()>=4)
+        {
+            throw new NotPostException("Ya hay 10 equipos en el torneo");
+        }
+
         DT nuevoDt = servicesDt.createDT(equipoDTOconDtDTO);
 
         Equipo nuevoEquipo = new Equipo();
         nuevoEquipo.setNombre(equipoDTOconDtDTO.getEquipoDTO().getNombreEquipo());
         nuevoEquipo.setDt(nuevoDt);
         nuevoEquipo.setNombreTorneo(torneo);
-
         iRepositoryTeam.save(nuevoEquipo);
+
+        torneo.getEquipos().add(nuevoEquipo); // actualiza la lista en memoria
+        if(torneo.getEquipos().size() == 4 && torneo.getEstadotorneo() == ESTADOTORNEO.PENDIENTE)
+        {
+            torneo.setEstadotorneo(ESTADOTORNEO.COMENZADO);
+            iRepositoryTournaumet.save(torneo);
+        }
+
         return ResponseEntity.ok("Equipo creado correctamente con su respectivo DT y torneo al que pertenece");
     }
 
@@ -123,12 +139,6 @@ public class ServicesEquipo {
         return ResponseEntity.ok("Equipo eliminado de la base de datos.");
     }
 
-    //OPTIONALS
-    public Optional<Equipo>teamByID(Long idEquipo)
-    {
-        Optional<Equipo>equipoById= iRepositoryTeam.findByIdEquipo(idEquipo);
-        return equipoById;
-    }
 
     public List<JugadorDTO> getListTeamAll(@PathVariable long idEquipo) throws NotFoundException
     {
@@ -145,7 +155,22 @@ public class ServicesEquipo {
             nuevoJDto.setNumeroCamiseta(j.getNumeroCamiseta());
             listAllEquipoDTO.add(nuevoJDto);
         }
+
+        if(listAllEquipoDTO.isEmpty())
+        {
+            throw new NotFoundException("No se encuentan jugadores asociados al equipo:" + equipo.getNombre());
+        }
+
         return listAllEquipoDTO;
     }
 
+
+
+
+    //OPTIONALS
+    public Optional<Equipo>teamByID(Long idEquipo)
+    {
+        Optional<Equipo>equipoById= iRepositoryTeam.findByIdEquipo(idEquipo);
+        return equipoById;
+    }
 }
