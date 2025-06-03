@@ -22,7 +22,6 @@ public class UserDTO {
 
     public UserDTO()
     {
-
     }
 
     public Long getIdUsuario() {
