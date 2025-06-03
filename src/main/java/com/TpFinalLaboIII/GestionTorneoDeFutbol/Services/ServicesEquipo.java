@@ -80,7 +80,7 @@ public class ServicesEquipo {
         torneo.getEquipos().add(nuevoEquipo); // actualiza la lista en memoria
         if(torneo.getEquipos().size() == 4 && torneo.getEstadotorneo() == ESTADOTORNEO.PENDIENTE)
         {
-            torneo.setEstadotorneo(ESTADOTORNEO.COMENZADO);
+            torneo.setEstadotorneo(ESTADOTORNEO.ESPERA);
             iRepositoryTournaumet.save(torneo);
         }
 

@@ -3,6 +3,7 @@ package com.TpFinalLaboIII.GestionTorneoDeFutbol.Services;
 
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.DTOS.EquipoDTO;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.DTOS.FixtureDTO;
+import com.TpFinalLaboIII.GestionTorneoDeFutbol.DTOS.FixtureDTOView;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Exeptions.EntityErrors.NotFoundException;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Exeptions.EntityErrors.NotPostException;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.Equipo;
@@ -11,6 +12,7 @@ import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.Torneo;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Enums.ESTADOPARTIDO;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Enums.ESTADOTORNEO;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Repositories.IRepositoryFixture;
+import com.TpFinalLaboIII.GestionTorneoDeFutbol.Repositories.IRepositoryTournaumet;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,17 +22,22 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ServicesFixture {
     @Autowired
     private final IRepositoryFixture iRepositoryFixture;
     @Autowired
+    private final IRepositoryTournaumet iRepositoryTournaumet;
+    @Autowired
     private final ServicesTorneo servicesTorneo;
 
 
-    public ServicesFixture(IRepositoryFixture iRepositoryFixture, ServicesTorneo servicesTorneo) {
+
+    public ServicesFixture(IRepositoryFixture iRepositoryFixture, IRepositoryTournaumet iRepositoryTournaumet, ServicesTorneo servicesTorneo) {
         this.iRepositoryFixture = iRepositoryFixture;
+        this.iRepositoryTournaumet = iRepositoryTournaumet;
         this.servicesTorneo = servicesTorneo;
     }
 
@@ -40,6 +47,10 @@ public class ServicesFixture {
         if(torneo == null)
         {
             throw new NotFoundException("No existe torneo con ese ID para desarrollar el fixture");
+        }
+        if(torneo.getEstadotorneo() == ESTADOTORNEO.COMENZADO)
+        {
+            throw  new NotPostException("Ya se genero el fixture de este torneo");
         }
 
         List<Equipo>equipos = torneo.getEquipos();
@@ -85,8 +96,32 @@ public class ServicesFixture {
         }
 
         iRepositoryFixture.saveAll(fixtures);
+        torneo.setEstadotorneo(ESTADOTORNEO.COMENZADO);
+        iRepositoryTournaumet.save(torneo);
         return ResponseEntity.ok("Fixture IDA y Vuelta generados");
     }
 
+
+
+    public List<FixtureDTOView>getAllFixture(@PathVariable long idTorneo)throws NotFoundException {
+        List<Fixture> fixtures = iRepositoryFixture.findByNombreTorneoIdTorneoOrderByFechaPartidoAsc(idTorneo);
+        if (fixtures.isEmpty()) {
+            throw new NotFoundException("Error, no se encuentran registros del fixture ID: " + idTorneo);
+        }
+
+        List<FixtureDTOView>fxView=new ArrayList<>();
+        for(Fixture f: fixtures)
+        {
+            FixtureDTOView fx = new FixtureDTOView();
+            fx.setIdFixture(f.getIdFixture());
+            fx.setNombreTorneo(f.getNombreTorneo().getNombre());
+            fx.setEstadopartido(f.getEstadopartido());
+            fx.setLocal(f.getLocal().getNombre());
+            fx.setVisitante(f.getVisitante().getNombre());
+            fx.setFechaPartido(f.getFechaPartido());
+            fxView.add(fx);
+        }
+        return fxView;
+    }
 
 }

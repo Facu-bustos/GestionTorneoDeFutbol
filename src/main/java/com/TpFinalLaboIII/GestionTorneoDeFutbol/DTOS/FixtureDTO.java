@@ -2,6 +2,7 @@ package com.TpFinalLaboIII.GestionTorneoDeFutbol.DTOS;
 
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.Equipo;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.EstadisticaGoleador;
+import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.Fixture;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.Torneo;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Enums.ESTADOPARTIDO;
 import jakarta.persistence.*;
@@ -25,6 +26,9 @@ public class FixtureDTO {
     private EquipoDTO local;
     private EquipoDTO visitante;
     private Torneo nombreTorneo;
+
+    public FixtureDTO(Fixture fixture) {
+    }
 
 
     public long getIdFixture() {
