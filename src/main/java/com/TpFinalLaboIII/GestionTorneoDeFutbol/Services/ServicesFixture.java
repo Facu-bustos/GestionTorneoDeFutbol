@@ -1,10 +1,5 @@
 package com.TpFinalLaboIII.GestionTorneoDeFutbol.Services;
-
-
-import com.TpFinalLaboIII.GestionTorneoDeFutbol.DTOS.EquipoDTO;
-import com.TpFinalLaboIII.GestionTorneoDeFutbol.DTOS.FixtureDTO;
-import com.TpFinalLaboIII.GestionTorneoDeFutbol.DTOS.FixtureDTOView;
-import com.TpFinalLaboIII.GestionTorneoDeFutbol.DTOS.FixtureDTOViewEnd;
+import com.TpFinalLaboIII.GestionTorneoDeFutbol.DTOS.*;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Exeptions.EntityErrors.NotFoundException;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Exeptions.EntityErrors.NotPostException;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.Equipo;
@@ -20,10 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -35,7 +32,6 @@ public class ServicesFixture {
     private final IRepositoryTournaumet iRepositoryTournaumet;
     @Autowired
     private final ServicesTorneo servicesTorneo;
-
 
 
     public ServicesFixture(IRepositoryFixture iRepositoryFixture, IRepositoryTournaumet iRepositoryTournaumet, ServicesTorneo servicesTorneo) {
@@ -134,11 +130,17 @@ public class ServicesFixture {
             throw new NotFoundException("No existe ese id como torneo en la base de datos");
         }
 
+        if(torneo.getEstadotorneo() == ESTADOTORNEO.TERMINADO || torneo.getEstadotorneo() == ESTADOTORNEO.PENDIENTE || torneo.getEstadotorneo() == ESTADOTORNEO.ESPERA)
+        {
+            throw new NotPostException("Error, el estado del torneo es incorrecto para generar los resultados del fixture");
+        }
+
         List<Fixture>fixtures = torneo.getFixture();
         if(fixtures.isEmpty())
         {
             throw new NotFoundException("El torneo no tiene Fixtures Cargados..");
         }
+
 
         for(Fixture f: fixtures)
         {
@@ -195,6 +197,60 @@ public class ServicesFixture {
         }
         return fixtureDTOViewEnds;
     }
+
+    public ResponseEntity<String>updateFixtureExists(@RequestBody FixtureDTOUpdate fx) throws NotFoundException, NotPostException {
+
+        if(fx.getIdFixture()<0)
+        {
+            throw new NotPostException("ERROR, idFixture negativo");
+        }
+
+        if(fx.getGolesLocal()<0 || fx.getGolesVisitante() < 0)
+        {
+            throw new NotPostException("Error, los goles visitantes o locales no pueden ser negativos");
+        }
+
+        Optional<Fixture> fix = iRepositoryFixture.findById(fx.getIdFixture());
+        if (fix.isEmpty()) {
+            throw new NotFoundException("ERROR, no se encuentran datos cargados en el fixture");
+        }
+
+        fix.get().setGolesEquipo1(fx.getGolesLocal());
+        fix.get().setGolesEquipo2(fx.getGolesVisitante());
+        fix.get().setEstadopartido(fx.getEstadopartido());
+        iRepositoryFixture.save(fix.get());
+
+        return ResponseEntity.ok("Fixture actualizado " + fx.getIdFixture());
+    }
+
+
+    public ResponseEntity<String>deleteFixtureId(@PathVariable long idFixture) throws NotFoundException
+    {
+        Optional<Fixture> fixture = iRepositoryFixture.findById(idFixture);
+        if(fixture.isEmpty())
+        {
+            throw new NotFoundException("Error, no se encuentra ese fixture en la base de datos");
+        }
+
+        iRepositoryFixture.deleteById(idFixture);
+        return ResponseEntity.ok("Fixture eliminado " + idFixture);
+    }
+
+
+    public ResponseEntity<String>deleteFixtureAllTournament(@PathVariable long idTorneo) throws NotFoundException
+    {
+        Torneo torneo = servicesTorneo.torneoExistAndPresent(idTorneo);
+        if(torneo == null)
+        {
+            throw new NotFoundException("El ID torneo no existe en la base de datos");
+        }
+
+        torneo.getFixture().clear();
+        iRepositoryTournaumet.save(torneo);
+
+        return ResponseEntity.ok("El fixture completo fue eliminado con exito");
+    }
+
 
     private int generadorDeGolesPorEstiloDeJuego(ESTILODEJUEGO estilodejuego)
     {
