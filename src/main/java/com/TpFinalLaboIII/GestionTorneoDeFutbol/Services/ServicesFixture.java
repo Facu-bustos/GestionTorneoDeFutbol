@@ -4,6 +4,7 @@ package com.TpFinalLaboIII.GestionTorneoDeFutbol.Services;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.DTOS.EquipoDTO;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.DTOS.FixtureDTO;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.DTOS.FixtureDTOView;
+import com.TpFinalLaboIII.GestionTorneoDeFutbol.DTOS.FixtureDTOViewEnd;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Exeptions.EntityErrors.NotFoundException;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Exeptions.EntityErrors.NotPostException;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.Equipo;
@@ -11,6 +12,7 @@ import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.Fixture;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.Torneo;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Enums.ESTADOPARTIDO;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Enums.ESTADOTORNEO;
+import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Enums.ESTILODEJUEGO;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Repositories.IRepositoryFixture;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Repositories.IRepositoryTournaumet;
 import org.apache.coyote.Response;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,7 +51,7 @@ public class ServicesFixture {
         {
             throw new NotFoundException("No existe torneo con ese ID para desarrollar el fixture");
         }
-        if(torneo.getEstadotorneo() == ESTADOTORNEO.COMENZADO)
+        if(torneo.getEstadotorneo() == ESTADOTORNEO.COMENZADO || torneo.getEstadotorneo() == ESTADOTORNEO.TERMINADO)
         {
             throw  new NotPostException("Ya se genero el fixture de este torneo");
         }
@@ -102,7 +105,6 @@ public class ServicesFixture {
     }
 
 
-
     public List<FixtureDTOView>getAllFixture(@PathVariable long idTorneo)throws NotFoundException {
         List<Fixture> fixtures = iRepositoryFixture.findByNombreTorneoIdTorneoOrderByFechaPartidoAsc(idTorneo);
         if (fixtures.isEmpty()) {
@@ -124,4 +126,92 @@ public class ServicesFixture {
         return fxView;
     }
 
+    public ResponseEntity<String>generateFixtureResult(@PathVariable long idTorneo)throws NotFoundException, NotPostException
+    {
+        Torneo torneo = servicesTorneo.torneoExistAndPresent(idTorneo);
+        if(torneo == null)
+        {
+            throw new NotFoundException("No existe ese id como torneo en la base de datos");
+        }
+
+        List<Fixture>fixtures = torneo.getFixture();
+        if(fixtures.isEmpty())
+        {
+            throw new NotFoundException("El torneo no tiene Fixtures Cargados..");
+        }
+
+        for(Fixture f: fixtures)
+        {
+            Equipo local = f.getLocal();
+            Equipo visitante = f.getVisitante();
+
+            int golesLocal = generadorDeGolesPorEstiloDeJuego(local.getDt().getEstilodejuego());
+            int golesVisitante = generadorDeGolesPorEstiloDeJuego(visitante.getDt().getEstilodejuego());
+
+            f.setGolesEquipo1(golesLocal);
+            f.setGolesEquipo2(golesVisitante);
+            f.setEstadopartido(ESTADOPARTIDO.TERMINADO);
+        }
+
+        iRepositoryFixture.saveAll(fixtures);
+        torneo.setEstadotorneo(ESTADOTORNEO.TERMINADO);
+        iRepositoryTournaumet.save(torneo);
+        return ResponseEntity.ok("Los datos de los Fixtures correspondientes al torneo estan cargados correctamente");
+    }
+
+
+    public List<FixtureDTOViewEnd>getFixtureDtoEnd(@PathVariable long idTorneo) throws NotFoundException
+    {
+        Torneo torneo = servicesTorneo.torneoExistAndPresent(idTorneo);
+        if(torneo == null)
+        {
+            throw new NotFoundException("¡Error! no existe ese id como torneo en la base de datos");
+        }
+
+        List<Fixture>fixtures = torneo.getFixture();
+        if(fixtures.isEmpty())
+        {
+            throw new NotFoundException("Los datos de los Fixtures correspondientes al torneo estan cargados correctamente");
+        }
+
+        List<FixtureDTOViewEnd>fixtureDTOViewEnds = new ArrayList<>();
+        for(Fixture f: fixtures)
+        {
+            if(f.getEstadopartido() == ESTADOPARTIDO.TERMINADO)
+            {
+                FixtureDTOViewEnd fx = new FixtureDTOViewEnd();
+                fx.setLocal(f.getLocal().getNombre());
+                fx.setGolesLocal(f.getGolesEquipo1());
+
+                fx.setVisitante(f.getVisitante().getNombre());
+                fx.setGolesVisitante(f.getGolesEquipo2());
+
+                fx.setEstadopartido(f.getEstadopartido());
+                fx.setIdFixture(f.getIdFixture());
+                fx.setFechaPartido(f.getFechaPartido());
+                fx.setNombreTorneo(f.getNombreTorneo().getNombre());
+                fixtureDTOViewEnds.add(fx);
+            }
+        }
+        return fixtureDTOViewEnds;
+    }
+
+    private int generadorDeGolesPorEstiloDeJuego(ESTILODEJUEGO estilodejuego)
+    {
+        Random random = new Random();
+        switch (estilodejuego){
+            case OFENSIVO -> {
+                return random.nextInt(4)+2;
+            }
+            case EQUILIBRADO -> {
+                return random.nextInt(3)+1;
+            }
+            case DEFENSIVO -> {
+                return random.nextInt(2);
+            }
+            default -> {
+                return random.nextInt(1);
+            }
+        }
+    }
 }

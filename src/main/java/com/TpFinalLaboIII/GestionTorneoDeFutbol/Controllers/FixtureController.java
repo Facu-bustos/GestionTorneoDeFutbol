@@ -2,6 +2,7 @@ package com.TpFinalLaboIII.GestionTorneoDeFutbol.Controllers;
 
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.DTOS.FixtureDTO;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.DTOS.FixtureDTOView;
+import com.TpFinalLaboIII.GestionTorneoDeFutbol.DTOS.FixtureDTOViewEnd;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Exeptions.EntityErrors.NotFoundException;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Exeptions.EntityErrors.NotPostException;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Services.ServicesFixture;
@@ -29,6 +30,12 @@ public class FixtureController {
         return servicesFixture.gerenateFixture(idTorneo);
     }
 
+    @PostMapping("/generate/result/{idTorneo}")
+    public ResponseEntity<String>generateFixtureResult(@PathVariable long idTorneo) throws NotFoundException, NotPostException
+    {
+        return servicesFixture.generateFixtureResult(idTorneo);
+    }
+
     @GetMapping("/get/fixture/{idTorneo}")
     @ResponseBody
     public List<FixtureDTOView>getFixtureDTO(@PathVariable long idTorneo) throws NotFoundException
@@ -36,6 +43,11 @@ public class FixtureController {
         return servicesFixture.getAllFixture(idTorneo);
     }
 
-
+    @GetMapping("/get/fixture/end/{idTorneo}")
+    @ResponseBody
+    public List<FixtureDTOViewEnd>getFixtureDtoEnd(@PathVariable long idTorneo) throws NotFoundException
+    {
+        return servicesFixture.getFixtureDtoEnd(idTorneo);
+    }
 
 }
