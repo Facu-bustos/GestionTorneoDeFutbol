@@ -1,9 +1,14 @@
 package com.TpFinalLaboIII.GestionTorneoDeFutbol.Services;
 
 
+import com.TpFinalLaboIII.GestionTorneoDeFutbol.DTOS.EstadisticasGoleadorDTO;
+import com.TpFinalLaboIII.GestionTorneoDeFutbol.DTOS.JugadorDTO;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Exeptions.EntityErrors.NotFoundException;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Exeptions.EntityErrors.NotPostException;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.*;
+import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Enums.ESTADOFIXTURE;
+import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Enums.ESTADOPARTIDO;
+import com.TpFinalLaboIII.GestionTorneoDeFutbol.Repositories.IRepositoryFixture;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Repositories.IRepositoryPlayer;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Repositories.IRepositoryTeam;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Repositories.IRepositoryeEstadisticaGoleador;
@@ -14,10 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.net.JarURLConnection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 @Service
 public class ServicesEstadisticaGoleador {
@@ -27,12 +29,18 @@ public class ServicesEstadisticaGoleador {
     @Autowired
     private final IRepositoryTeam iRepositoryTeam;
     @Autowired
+    private final IRepositoryFixture iRepositoryFixture;
+    @Autowired
+    final  IRepositoryPlayer iRepositoryPlayer;
+    @Autowired
     private final ServicesTorneo servicesTorneo;
 
 
-    public ServicesEstadisticaGoleador(IRepositoryeEstadisticaGoleador iRepositoryeEstadisticaGoleador, IRepositoryTeam iRepositoryTeam, ServicesTorneo servicesTorneo) {
+    public ServicesEstadisticaGoleador(IRepositoryeEstadisticaGoleador iRepositoryeEstadisticaGoleador, IRepositoryTeam iRepositoryTeam, IRepositoryFixture iRepositoryFixture, IRepositoryPlayer iRepositoryPlayer, ServicesTorneo servicesTorneo) {
         this.iRepositoryeEstadisticaGoleador = iRepositoryeEstadisticaGoleador;
         this.iRepositoryTeam = iRepositoryTeam;
+        this.iRepositoryFixture = iRepositoryFixture;
+        this.iRepositoryPlayer = iRepositoryPlayer;
         this.servicesTorneo = servicesTorneo;
     }
 
@@ -60,12 +68,17 @@ public class ServicesEstadisticaGoleador {
     }
 
 
-    public void asignadorDeGoles(Long idEquipo, long goles,Fixture fixture) throws NotFoundException
+    public void asignadorDeGoles(Long idEquipo, long goles,Fixture fixture) throws NotFoundException, NotPostException
     {
 
         if(goles <=0 )
         {
             return;
+        }
+
+        if(fixture.getEstadopartido()== ESTADOPARTIDO.PENDIENTE)
+        {
+            throw new NotPostException("Error, el partido aun no se juega");
         }
 
         Equipo equipo = iRepositoryTeam.findById(idEquipo).orElseThrow(()-> new NotFoundException("El equipo no se encuenta en la base de datos"));
@@ -91,8 +104,35 @@ public class ServicesEstadisticaGoleador {
             estadistica.setIdEquipo(equipo.getIdEquipo());
             estadistica.setCantidadGoles(entry.getValue());
             estadistica.setFixture(fixture);
-
             iRepositoryeEstadisticaGoleador.save(estadistica);
+            fixture.setEstadofixture(ESTADOFIXTURE.TERMINADO);
         }
+        iRepositoryFixture.save(fixture);
     }
+
+    public List<EstadisticasGoleadorDTO>getStatistcs(@PathVariable long idTorneo) throws NotFoundException
+    {
+        List<EstadisticaGoleador>estadisticas = iRepositoryeEstadisticaGoleador.findAll();
+        if(estadisticas.isEmpty())
+        {
+            throw new NotFoundException("Error, no encontraron estadisticas en el sistema");
+        }
+
+        List<EstadisticasGoleadorDTO>estadisticasGoleadorDTOS = new ArrayList<>();
+        for(EstadisticaGoleador e: estadisticas)
+        {
+            EstadisticasGoleadorDTO estaDTO = new EstadisticasGoleadorDTO();
+            Optional<Jugador> jugador = iRepositoryPlayer.findById(e.getIdJugador());
+            Optional<Equipo>equipo = iRepositoryTeam.findByIdEquipo(e.getIdEquipo());
+            estaDTO.setIdEstadistica(e.getIdEstadistica());
+            estaDTO.setCantidadGoles(e.getCantidadGoles());
+            estaDTO.setIdJugador(e.getIdJugador());
+            estaDTO.setNombreJugador(jugador.get().getNombre());
+            estaDTO.setEquipo(equipo.get().getNombre());
+            estaDTO.setIdEquipo(e.getIdEquipo());
+            estadisticasGoleadorDTOS.add(estaDTO);
+        }
+        return estadisticasGoleadorDTOS;
+    }
+
 }

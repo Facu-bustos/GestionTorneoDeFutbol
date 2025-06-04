@@ -5,6 +5,7 @@ import com.TpFinalLaboIII.GestionTorneoDeFutbol.Exeptions.EntityErrors.NotPostEx
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.Equipo;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.Fixture;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.Torneo;
+import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Enums.ESTADOFIXTURE;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Enums.ESTADOPARTIDO;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Enums.ESTADOTORNEO;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Enums.ESTILODEJUEGO;
@@ -76,6 +77,7 @@ public class ServicesFixture {
                 fixtureIda.setVisitante(equipo2);
                 fixtureIda.setFechaPartido(fechaBase.plusDays(contadorDeDias++ * diasEntrePartidos));
                 fixtureIda.setEstadopartido(ESTADOPARTIDO.PENDIENTE);
+                fixtureIda.setEstadofixture(ESTADOFIXTURE.PENDIENTE);
                 fixtureIda.setGolesEquipo1(0);
                 fixtureIda.setGolesEquipo2(0);
                 fixtureIda.setNombreTorneo(torneo);
@@ -87,6 +89,7 @@ public class ServicesFixture {
                 fixtureVuelta.setVisitante(equipo1);
                 fixtureVuelta.setFechaPartido(fechaBase.plusDays(contadorDeDias++ * diasEntrePartidos));
                 fixtureVuelta.setEstadopartido(ESTADOPARTIDO.PENDIENTE);
+                fixtureVuelta.setEstadofixture(ESTADOFIXTURE.PENDIENTE);
                 fixtureVuelta.setGolesEquipo1(0);
                 fixtureVuelta.setGolesEquipo2(0);
                 fixtureVuelta.setNombreTorneo(torneo);

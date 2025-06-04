@@ -1,5 +1,6 @@
 package com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities;
 
+import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Enums.ESTADOFIXTURE;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Enums.ESTADOPARTIDO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -31,7 +32,17 @@ public class Fixture {
     @Enumerated(EnumType.STRING)
     private ESTADOPARTIDO estadopartido;
 
-    
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private ESTADOFIXTURE estadofixture;
+
+    public @NotNull ESTADOFIXTURE getEstadofixture() {
+        return estadofixture;
+    }
+
+    public void setEstadofixture(@NotNull ESTADOFIXTURE estadofixture) {
+        this.estadofixture = estadofixture;
+    }
 
     //birideccional
     @ManyToOne()

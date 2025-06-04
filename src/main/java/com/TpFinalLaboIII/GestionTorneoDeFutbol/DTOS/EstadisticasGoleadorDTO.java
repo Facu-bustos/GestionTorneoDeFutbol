@@ -1,33 +1,33 @@
-package com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities;
+package com.TpFinalLaboIII.GestionTorneoDeFutbol.DTOS;
 
-import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Enums.ESTADOFIXTURE;
-import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Enums.ESTADOPARTIDO;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
-@Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-@ToString
-public class EstadisticaGoleador {
-    @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
+public class EstadisticasGoleadorDTO {
     private long idEstadistica;
     private long idJugador;
+    private String nombreJugador;
+    private String equipo;
     private long cantidadGoles;
     private long idEquipo;
 
+    public String getEquipo() {
+        return equipo;
+    }
 
+    public void setEquipo(String equipo) {
+        this.equipo = equipo;
+    }
 
-    //Birideccional
-    @ManyToOne()
-    @JoinColumn(name = "id_Fixture",
-    referencedColumnName = "idFixture")
-    private Fixture fixture;
+    public String getNombreJugador() {
+        return nombreJugador;
+    }
 
-
+    public void setNombreJugador(String nombreJugador) {
+        this.nombreJugador = nombreJugador;
+    }
 
     public long getIdEstadistica() {
         return idEstadistica;
@@ -59,13 +59,5 @@ public class EstadisticaGoleador {
 
     public void setIdEquipo(long idEquipo) {
         this.idEquipo = idEquipo;
-    }
-
-    public Fixture getFixture() {
-        return fixture;
-    }
-
-    public void setFixture(Fixture fixture) {
-        this.fixture = fixture;
     }
 }
