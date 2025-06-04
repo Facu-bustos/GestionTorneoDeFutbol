@@ -113,24 +113,31 @@ public class ServicesEstadisticaGoleador {
     public List<EstadisticasGoleadorDTO>getStatistcs(@PathVariable long idTorneo) throws NotFoundException
     {
         List<EstadisticaGoleador>estadisticas = iRepositoryeEstadisticaGoleador.findAll();
+
         if(estadisticas.isEmpty())
         {
             throw new NotFoundException("Error, no encontraron estadisticas en el sistema");
         }
 
+        estadisticas.sort(Comparator.comparing(EstadisticaGoleador::getCantidadGoles).reversed());
+
         List<EstadisticasGoleadorDTO>estadisticasGoleadorDTOS = new ArrayList<>();
         for(EstadisticaGoleador e: estadisticas)
         {
             EstadisticasGoleadorDTO estaDTO = new EstadisticasGoleadorDTO();
+
             Optional<Jugador> jugador = iRepositoryPlayer.findById(e.getIdJugador());
             Optional<Equipo>equipo = iRepositoryTeam.findByIdEquipo(e.getIdEquipo());
-            estaDTO.setIdEstadistica(e.getIdEstadistica());
-            estaDTO.setCantidadGoles(e.getCantidadGoles());
-            estaDTO.setIdJugador(e.getIdJugador());
-            estaDTO.setNombreJugador(jugador.get().getNombre());
-            estaDTO.setEquipo(equipo.get().getNombre());
-            estaDTO.setIdEquipo(e.getIdEquipo());
-            estadisticasGoleadorDTOS.add(estaDTO);
+            if(jugador.isPresent() && equipo.isPresent())
+            {
+                estaDTO.setIdEstadistica(e.getIdEstadistica());
+                estaDTO.setCantidadGoles(e.getCantidadGoles());
+                estaDTO.setIdJugador(e.getIdJugador());
+                estaDTO.setNombreJugador(jugador.get().getNombre());
+                estaDTO.setEquipo(equipo.get().getNombre());
+                estaDTO.setIdEquipo(e.getIdEquipo());
+                estadisticasGoleadorDTOS.add(estaDTO);
+            }
         }
         return estadisticasGoleadorDTOS;
     }
