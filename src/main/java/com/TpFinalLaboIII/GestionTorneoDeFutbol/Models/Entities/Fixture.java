@@ -31,6 +31,8 @@ public class Fixture {
     @Enumerated(EnumType.STRING)
     private ESTADOPARTIDO estadopartido;
 
+    
+
     //birideccional
     @ManyToOne()
     @JoinColumn(name = "id_Equipo_local", referencedColumnName = "idEquipo")

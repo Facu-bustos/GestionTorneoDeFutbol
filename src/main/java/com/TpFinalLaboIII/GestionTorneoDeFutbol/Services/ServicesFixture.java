@@ -155,9 +155,13 @@ public class ServicesFixture {
             f.setEstadopartido(ESTADOPARTIDO.TERMINADO);
         }
 
+
+
         iRepositoryFixture.saveAll(fixtures);
         torneo.setEstadotorneo(ESTADOTORNEO.TERMINADO);
         iRepositoryTournaumet.save(torneo);
+
+
         return ResponseEntity.ok("Los datos de los Fixtures correspondientes al torneo estan cargados correctamente");
     }
 
