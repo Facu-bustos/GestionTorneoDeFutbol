@@ -30,6 +30,8 @@ public class Usuario {
     @Enumerated(EnumType.STRING)
     private ROLEUSER roleuser;
 
+
+
     public Long getIdUsuario() {
         return idUsuario;
     }

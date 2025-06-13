@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.convert.Jsr310Converters;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,10 +32,12 @@ import java.util.Optional;
 public class ServicesUser {
     @Autowired
     private final IRepositoryUser iRepositoryUser;
+    @Autowired
+    private final PasswordEncoder passwordEncoder;
 
-
-    public ServicesUser(IRepositoryUser iRepositoryUser) {
+    public ServicesUser(IRepositoryUser iRepositoryUser, PasswordEncoder passwordEncoder) {
         this.iRepositoryUser = iRepositoryUser;
+        this.passwordEncoder = passwordEncoder;
     }
 
 
@@ -53,7 +56,7 @@ public class ServicesUser {
         Usuario usuario = new Usuario();
         usuario.setUsername(userDTO.getUsername());
         usuario.setEmail(userDTO.getEmail());
-        usuario.setPassword(userDTO.getPassword());
+        usuario.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         usuario.setRoleuser(userDTO.getRoleuser());
         iRepositoryUser.save(usuario);
         return ResponseEntity.ok("Usuario creado con exito");
