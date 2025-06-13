@@ -30,9 +30,6 @@ public class Usuario {
     @Enumerated(EnumType.STRING)
     private ROLEUSER roleuser;
 
-    @OneToOne
-    @JoinColumn(name = "dt_id")
-    private DT dt;
 
 
     public Long getIdUsuario() {
