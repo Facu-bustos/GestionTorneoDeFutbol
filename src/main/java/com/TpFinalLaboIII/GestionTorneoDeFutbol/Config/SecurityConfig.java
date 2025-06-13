@@ -65,7 +65,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/api/auth/login",        // tus endpoints públicos, como login o registro
+                                "/api/auth/**",        // tus endpoints públicos, como login o registro
                                 "/api/users/addUser"   // permitir crear un admin
                         ).permitAll()
                         .anyRequest().authenticated()
