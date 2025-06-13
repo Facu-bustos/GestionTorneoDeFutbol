@@ -70,7 +70,6 @@ public class ServicesEstadisticaGoleador {
 
     public void asignadorDeGoles(Long idEquipo, long goles,Fixture fixture) throws NotFoundException, NotPostException
     {
-
         if(goles <=0 )
         {
             return;
