@@ -65,10 +65,13 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/api/auth/**",        // tus endpoints públicos, como login o registro
-                                "/api/users/addUser"   // permitir crear un admin
+                                "/api/estadistica/get/estadisticasGoleador/*",
+                                "/api/fixture/get/fixture/*",
+                                "/api/fixture/get/fixture/end/*",
+                                "/api/auth/login"
                         ).permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers("/api/dt/**").hasAnyRole("ADMINISTRADOR","DT")
+                        .anyRequest().hasAnyRole("ADMINISTRADOR")
                 )
                 .sessionManagement(sess -> sess
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
