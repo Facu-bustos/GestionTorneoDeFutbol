@@ -30,6 +30,9 @@ public class Usuario {
     @Enumerated(EnumType.STRING)
     private ROLEUSER roleuser;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "id_DT", referencedColumnName = "idDT")
+    private DT dt;
 
 
     public Long getIdUsuario() {
@@ -70,5 +73,13 @@ public class Usuario {
 
     public void setRoleuser(@NotNull ROLEUSER roleuser) {
         this.roleuser = roleuser;
+    }
+
+    public DT getDt() {
+        return dt;
+    }
+
+    public void setDt(DT dt) {
+        this.dt = dt;
     }
 }

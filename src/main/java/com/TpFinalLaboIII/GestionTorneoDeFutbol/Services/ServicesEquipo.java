@@ -6,10 +6,7 @@ import com.TpFinalLaboIII.GestionTorneoDeFutbol.DTOS.JugadorDTO;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.DTOS.TorneoDTO;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Exeptions.EntityErrors.NotFoundException;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Exeptions.EntityErrors.NotPostException;
-import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.DT;
-import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.Equipo;
-import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.Jugador;
-import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.Torneo;
+import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Entities.*;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Enums.ESTADOTORNEO;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Models.Enums.ROLEUSER;
 import com.TpFinalLaboIII.GestionTorneoDeFutbol.Repositories.IRepositoryDt;
@@ -39,22 +36,23 @@ public class ServicesEquipo {
     private final IRepositoryPlayer iRepositoryPlayer;
     @Autowired
     private final IRepositoryTournaumet iRepositoryTournaumet;
+    @Autowired
+    private final ServicesUser servicesUser;
 
-
-    public ServicesEquipo(IRepositoryTeam iRepositoryTeam, ServicesDt servicesDt, ServicesTorneo servicesTorneo, IRepositoryPlayer iRepositoryPlayer, IRepositoryTournaumet iRepositoryTournaumet) {
+    public ServicesEquipo(IRepositoryTeam iRepositoryTeam, ServicesDt servicesDt, ServicesTorneo servicesTorneo, IRepositoryPlayer iRepositoryPlayer, IRepositoryTournaumet iRepositoryTournaumet, ServicesUser servicesUser) {
         this.iRepositoryTeam = iRepositoryTeam;
         this.servicesDt = servicesDt;
         this.servicesTorneo = servicesTorneo;
         this.iRepositoryPlayer = iRepositoryPlayer;
         this.iRepositoryTournaumet = iRepositoryTournaumet;
+        this.servicesUser = servicesUser;
     }
 
     public ResponseEntity<String> createDtAndTeam(@RequestBody EquipoDTOconDtDTO equipoDTOconDtDTO, @PathVariable long idTorneo) throws NotFoundException, NotPostException
     {
-        if(equipoDTOconDtDTO.getEquipoDTO().getNombreEquipo() == null || equipoDTOconDtDTO.getEstilodejuegoDT() == null ||
-                equipoDTOconDtDTO.getRoleuserDT() != ROLEUSER.DT || equipoDTOconDtDTO.getNombreDT() == null)
+        if(equipoDTOconDtDTO.getEquipoDTO().getNombreEquipo() == null || equipoDTOconDtDTO.getEstilodejuegoDT() == null)
         {
-            throw new NotPostException("Error en los de EQUIPODTO, NOMBRES - ESTILO DE JUEGO - ROLE");
+            throw new NotPostException("Error en los de EQUIPODTO, ESTILO DE JUEGO - NOMBRE EQUIPO");
         }
 
         Boolean torneoExists = servicesTorneo.torneoExists(idTorneo);
@@ -69,12 +67,15 @@ public class ServicesEquipo {
             throw new NotPostException("Ya hay 4 equipos en el torneo");
         }
 
-        DT nuevoDt = servicesDt.createDT(equipoDTOconDtDTO);
+        Optional<Usuario> usuarioDT = servicesUser.getUsuarioOptional(equipoDTOconDtDTO.getIdDT());
+        DT nuevoDt = servicesDt.createDT(usuarioDT.get(), equipoDTOconDtDTO);
 
         Equipo nuevoEquipo = new Equipo();
         nuevoEquipo.setNombre(equipoDTOconDtDTO.getEquipoDTO().getNombreEquipo());
+
         nuevoEquipo.setDt(nuevoDt);
         nuevoEquipo.setNombreTorneo(torneo);
+
         iRepositoryTeam.save(nuevoEquipo);
 
         torneo.getEquipos().add(nuevoEquipo); // actualiza la lista en memoria
