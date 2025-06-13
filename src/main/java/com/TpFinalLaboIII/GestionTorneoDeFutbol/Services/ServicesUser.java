@@ -23,10 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.swing.text.View;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ServicesUser {
@@ -49,7 +46,7 @@ public class ServicesUser {
         }
 
         if (userDTO.getUsername() == null || userDTO.getPassword() == null
-                || userDTO.getEmail() == null || userDTO.getRoleuser() != ROLEUSER.ADMINISTRADOR) {
+                || userDTO.getEmail() == null || userDTO.getRoleuser() != ROLEUSER.ADMINISTRADOR && userDTO.getRoleuser() != ROLEUSER.DT) {
             throw new NotPostException("Error al ingresar un ADMIN, datos erroneos");
         }
 
@@ -136,6 +133,18 @@ public class ServicesUser {
         viewUserDTO.setRoleuser(userByEmail.getRoleuser());
         return viewUserDTO;
     }
+
+    public Optional<Usuario>getUsuarioOptional(long id) throws NotFoundException
+    {
+        Optional<Usuario>usuarioBuscado = iRepositoryUser.findById(id);
+
+        if(usuarioBuscado.isEmpty())
+        {
+            throw new NotFoundException("Error, usuario NO encontrado");
+        }
+        return usuarioBuscado;
+    }
+
 }
 
 

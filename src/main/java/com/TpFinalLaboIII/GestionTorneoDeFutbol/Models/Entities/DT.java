@@ -27,9 +27,11 @@ public class DT{
     @Enumerated(EnumType.STRING)
     private ESTILODEJUEGO  estilodejuego;
 
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    private ROLEUSER roleuser ;
+
+    @OneToOne(mappedBy = "dt")
+    private Usuario usuario;
+
+
 
     public long getIdDT() {
         return idDT;
@@ -63,11 +65,5 @@ public class DT{
         this.estilodejuego = estilodejuego;
     }
 
-    public @NotNull ROLEUSER getRoleuser() {
-        return roleuser;
-    }
 
-    public void setRoleuser(@NotNull ROLEUSER roleuser) {
-        this.roleuser = roleuser;
-    }
 }
