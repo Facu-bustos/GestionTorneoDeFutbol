@@ -9,8 +9,6 @@ import org.apache.catalina.LifecycleState;
 import java.util.List;
 
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
 @ToString
 public class Equipo {
