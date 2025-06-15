@@ -58,8 +58,4 @@ public class EquipoController {
         return servicesEquipo.getListTeamAll(idEquipo);
     }
 
-
-
-
-
 }
