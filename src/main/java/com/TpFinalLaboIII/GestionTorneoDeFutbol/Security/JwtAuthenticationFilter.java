@@ -32,6 +32,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
+        String path = request.getRequestURI();
+        if (path.startsWith("/v3/api-docs")
+                || path.startsWith("/swagger-ui")
+                || path.startsWith("/swagger-resources")
+                || path.equals("/swagger-ui.html")
+                || path.equals("/")
+                || path.startsWith("/api/auth/login")
+                || path.startsWith("/api/estadistica/get/estadisticasGoleador")
+                || path.startsWith("/api/fixture/get/fixture")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
         final String userEmail;
