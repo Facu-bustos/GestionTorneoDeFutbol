@@ -64,11 +64,16 @@ public class SecurityConfig {
         return http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
+                        .requestMatchers(// antes
                                 "/api/estadistica/get/estadisticasGoleador/*",
                                 "/api/fixture/get/fixture/*",
                                 "/api/fixture/get/fixture/end/*",
-                                "/api/auth/login"
+                                "/api/auth/login",
+                                // Swagger
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/swagger-ui.html",
+                                "/swagger-ui/index.html"
                         ).permitAll()
                         .requestMatchers("/api/dt/**").hasAnyRole("ADMINISTRADOR","DT")
                         .anyRequest().hasAnyRole("ADMINISTRADOR")
